@@ -4,13 +4,15 @@ This is script-based software to enable different kinds of dice simulation in a 
 
 ## Current Version
 
-| Component  | Version | Description |
-| :--------: | :-----: | :---------: |
-|  Project   |  0.0.1  |             |
-| ds-convert |    -    |             |
-| ds-compile |    -    |             |
-|   ds-gui   |    -    |             |
-|   ds-vsc   |    -    |             |
+|  Component  | Version | Description |
+| :---------: | :-----: | :---------: |
+|   Project   |  0.0.1  |             |
+| ds-convert  |    -    |             |
+| ds-compile  |    -    |             |
+|   ds-help   |    -    |             |
+| ds-maintain |    -    |             |
+|   ds-gui    |    -    |             |
+|   ds-vsc    |    -    |             |
 
 > Documentation version will follow the project version.
 
