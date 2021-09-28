@@ -1,0 +1,7 @@
+/Users/tvj/Downloads/astyle/CMakeFiles/install/local.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/install/strip.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/install.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/list_install_components.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/rebuild_cache.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/edit_cache.dir
+/Users/tvj/Downloads/astyle/CMakeFiles/astyle.dir
