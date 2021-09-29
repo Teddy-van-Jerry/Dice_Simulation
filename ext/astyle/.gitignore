@@ -1,0 +1,4 @@
+*.orig
+CMakeCache.txt
+cmake_install.cmake
+!win/bin/AStyle.exe
