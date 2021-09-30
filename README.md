@@ -6,7 +6,7 @@ This is script-based software to enable different kinds of dice simulation in a 
 
 |  Component  | Version | Description |
 | :---------: | :-----: | :---------: |
-|   Project   |  0.0.1  |             |
+|   Project   |  0.0.2  |             |
 | ds-convert  |    -    |             |
 | ds-compile  |    -    |             |
 |   ds-help   |    -    |             |
@@ -15,6 +15,9 @@ This is script-based software to enable different kinds of dice simulation in a 
 |   ds-vsc    |    -    |             |
 
 > Documentation version will follow the project version.
+
+Currently, using ReactPhysics3D directly from C++ is being tested.
+Sample files are in `src/cpp`.
 
 ## Project Schedule
 
