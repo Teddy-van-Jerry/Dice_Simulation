@@ -1,0 +1,5 @@
+# output
+HelloWorld
+*.out
+*.exe
+*.o
