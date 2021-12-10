@@ -1,0 +1,3 @@
+[submodule "doc/wordpress/Dice_Simulation_Online_Doc"]
+	path = doc/wordpress/Dice_Simulation_Online_Doc
+	url = https://github.com/Teddy-van-Jerry/Dice_Simulation_Online_Doc.git
