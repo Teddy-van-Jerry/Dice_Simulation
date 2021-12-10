@@ -34,3 +34,7 @@ Here the task is split into four components:
 ### Version 1.x
 
 Offer visual simulation using OpenGL.
+
+## Documentation
+
+Documentation is published at https://dice.teddy-van-jerry and is in the repo [Teddy-van-Jerry/Dice_Simulation_Online_Doc](https://github.com/Teddy-van-Jerry/Dice_Simulation_Online_Doc) or [Dice-Simulation/Dice_Simulation_Online_Doc](https://github.com/Teddy-van-Jerry/Dice_Simulation_Online_Doc).
