@@ -6,7 +6,7 @@ This is script-based software to enable different kinds of dice simulation in a 
 
 |  Component  | Version | Description |
 | :---------: | :-----: | :---------: |
-|   Project   |  0.0.2  |             |
+|   Project   |  0.0.4  |             |
 | ds-convert  |    -    |             |
 | ds-compile  |    -    |             |
 |   ds-help   |    -    |             |
@@ -38,3 +38,8 @@ Offer visual simulation using OpenGL.
 ## Documentation
 
 Documentation is published at https://dice.teddy-van-jerry and is in the repo [Teddy-van-Jerry/Dice_Simulation_Online_Doc](https://github.com/Teddy-van-Jerry/Dice_Simulation_Online_Doc) or [Dice-Simulation/Dice_Simulation_Online_Doc](https://github.com/Teddy-van-Jerry/Dice_Simulation_Online_Doc).
+
+## VS Code Extension
+
+- Repo: [Teddy-van-Jerry/Dice_Simulation_VSC](https://github.com/Teddy-van-Jerry/Dice_Simulation_VSC)
+- Market Place: https://marketplace.visualstudio.com/items?itemName=Teddy-van-Jerry.dice-simulation
