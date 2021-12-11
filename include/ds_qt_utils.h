@@ -16,14 +16,12 @@
  * @return The QString version of version number
  *         with the format "major.minor.patch"
  */
-QString versionNumber2String(int v) {
-    if (v <= 0) return "0.0.0";
-    int patch = v % 256;
-    int minor = v / 256 % 256;
-    int major = v / 256 / 256;
-    return QString::number(major) + "."
-         + QString::number(minor) + "."
-         + QString::number(patch);
-}
+QString versionNumber2String(int v);
+
+/*  Alias for 2D array of QString.
+ *  It is actually implemented using QVector<QString>,
+ *  but the size of 2 should be obeserved by the user.
+ */
+using QStringPair = QVector<QString>;
 
 #endif // DS_QT_UTILS_H

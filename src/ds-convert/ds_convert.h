@@ -53,6 +53,14 @@ private:
 
     bool debug_ = false; /**< Debug option */
 
+    QVector<QStringPair> blockDefPairs {
+        {"DS_BEGIN_GLOBAL" , "DS_END_GLOBAL"},
+        {"DS_BEGIN_DICE"   , "DS_END_DICE"},
+        {"DS_BEGIN_TASK"   , "DS_END_TASK"},
+        {"DS_BEGIN_CPP"    , "DS_END_CPP"},
+        {"DS_BEGIN_PROCESS", "DS_END_PROCESS"}
+    };
+
     /**
      * @brief read source file and set lines_.
      */
@@ -69,6 +77,14 @@ private:
      * @param lines text lines
      */
     void writeLines(const QStringList& lines) const;
+
+    /**
+     * @brief Remove comments in lines_.
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool removeComments();
 
 };
 
