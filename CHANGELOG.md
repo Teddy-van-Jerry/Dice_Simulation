@@ -1,8 +1,14 @@
 # Change Log
 
-## Version 0.1 (Unreleased)
+## Version 0.1 [Unreleased]
 
 ## Version 0.0
+
+<details><summary><b>0.0.4</b> (2021/12/11)</summary><p>
+  
+  - Add VS Code Extension https://github.com/Teddy-van-Jerry/Dice_Simulation_VSC.
+  
+</p></details>
 
 <details><summary><b>0.0.3</b> (2021/12/10)</summary><p>
   
