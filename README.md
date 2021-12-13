@@ -1,5 +1,7 @@
 # Dice Simulation
 
+![Dice Simulation Logo](src/img/icon/ds-banner.png)
+
 This is script-based software to enable different kinds of dice simulation in a visual way.
 
 ## Current Version

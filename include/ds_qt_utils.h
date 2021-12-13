@@ -18,9 +18,10 @@
  */
 QString versionNumber2String(int v);
 
-/*  Alias for 2D array of QString.
- *  It is actually implemented using QVector<QString>,
- *  but the size of 2 should be obeserved by the user.
+/**
+ * Alias for 2D array of QString.
+ * It is actually implemented using QVector<QString>,
+ * but the size of 2 should be obeserved by the user.
  */
 using QStringPair = QVector<QString>;
 

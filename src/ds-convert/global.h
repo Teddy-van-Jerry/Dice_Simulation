@@ -1,7 +1,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "ds_global.h"
+#include "ds_global.ds-h"
 #include "ds_qt_utils.h"
 
 /** String Version of __DS_CONVERT_VERSION__ */

@@ -45,7 +45,7 @@ void DS_Convert::readFileAll() {
         }
         f.close();
     } else {
-        qDebug() << "Cannot open file \"" << sourceFile_ << "\"" << Qt::endl;
+        qDebug() << "Cannot open file " << sourceFile_ << Qt::endl;
     }
     removeComments(); // replace comments texts into spaces
 }
@@ -57,7 +57,7 @@ void DS_Convert::writeLine(const QString& line) const {
         out << line << Qt::endl;
         f.close();
     } else {
-        qDebug() << "Cannot write file \"" << destinationFile_ << "\"" << Qt::endl;
+        qDebug() << "Cannot write file " << destinationFile_ << Qt::endl;
     }
 }
 

@@ -4,7 +4,7 @@ CONFIG += c++11 console
 CONFIG -= app_bundle
 
 TARGET = ds-convert
-DESTDIR_TARGET = ../../bin
+DESTDIR = ../../bin
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -21,7 +21,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    ../../include/ds_global.h \
+    ../../include/ds_global.ds-h \
     ../../include/ds_qt_utils.h \
     ds_convert.h \
     global.h

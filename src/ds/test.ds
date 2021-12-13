@@ -9,3 +9,8 @@
     "Version": "0.0.4" // Version of Dice Simulation
     "Gravity": 9.81 // [N/kg]
 #DS_END_GLOBAL
+
+``` simu
+    "Dice": test_dice
+    ""
+```!
