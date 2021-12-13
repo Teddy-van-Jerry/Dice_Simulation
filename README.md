@@ -1,18 +1,20 @@
 # Dice Simulation
 
+![Dice Simulation Logo](src/img/icon/ds-banner.png)
+
 This is script-based software to enable different kinds of dice simulation in a visual way.
 
 ## Current Version
 
 |  Component  | Version | Description |
 | :---------: | :-----: | :---------: |
-|   Project   |  0.0.4  |             |
-| ds-convert  |    -    |             |
-| ds-compile  |    -    |             |
+|   Project   |  0.0.4  | Main project. |
+| ds-convert  |  0.0.1  | Convert `ds` code to standard `cpp` code. |
+| ds-compile  |    -    | Compile the compiled `cpp` code. |
 |   ds-help   |    -    |             |
 | ds-maintain |    -    |             |
 |   ds-gui    |    -    |             |
-|   ds-vsc    |    -    |             |
+|   ds-vsc    |  0.0.1  | Visual Studio Code Extension for DS |
 
 > Documentation version will follow the project version.
 

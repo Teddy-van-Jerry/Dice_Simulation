@@ -1,0 +1,16 @@
+/**
+ * @brief This is a Dice Simuation test file
+ * 
+ * @date 2021-12-11
+ * @author Teddy van Jerry
+ */
+
+#DS_BEGIN_GLOBAL
+    "Version": "0.0.4" // Version of Dice Simulation
+    "Gravity": 9.81 // [N/kg]
+#DS_END_GLOBAL
+
+``` simu
+    "Dice": test_dice
+    ""
+```!
