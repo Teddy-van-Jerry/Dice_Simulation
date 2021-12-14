@@ -2,7 +2,6 @@
 
 DS_Convert::DS_Convert() { }
 
-
 DS_Convert::DS_Convert(QString sourceFile, QString destinationFile)
     : sourceFile_(sourceFile), destinationFile_(destinationFile) { }
 
@@ -34,6 +33,19 @@ bool DS_Convert::convert() {
         }
         i++;
     }
+    style();
+    return true;
+}
+
+bool DS_Convert::style() {
+    QProcess* styleProcess = new QProcess;
+    // QFileInfo sourceFileInfo(sourceFile_);
+    // sourceFileInfo.absoluteDir().absolutePath()
+    styleProcess->setWorkingDirectory(QCoreApplication::applicationDirPath());
+    QStringList args;
+    args << "--style=java" << "-n" << destinationFile_;
+    styleProcess->start("astyle", args);
+    styleProcess->waitForFinished();
     return true;
 }
 
@@ -51,7 +63,7 @@ bool DS_Convert::initConvert() {
     if (f.open(QIODevice::WriteOnly)) {
         QTextStream out(&f);
         out << "// Converted by Dice Simulation " << __DS_VERSION_STR__
-            << " at " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd UTC") << ".\n" << Qt::endl;
+            << " at " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss UTC") << ".\n" << Qt::endl;
         f.close();
         return true;
     } else {
@@ -105,7 +117,7 @@ bool DS_Convert::writeLines(const QStringList& lines) const {
 }
 
 QString DS_Convert::convertVarDef(QString type, QString varName, const QString& value) const {
-    return type + " " + varName + "=" + value + ";";
+    return type + " " + varName + " = " + value + ";";
 }
 
 bool DS_Convert::removeComments() {
@@ -164,6 +176,8 @@ bool DS_Convert::convertDSBlock(int blockType, int begin_i, int end_i) {
     switch (blockType) {
     case 0:
         return convert_DS_GLOBAL(begin_i, end_i);
+    case 4:
+        return convert_DS_PROCESS(begin_i, end_i);
     default:
         return false;
     }
@@ -171,7 +185,7 @@ bool DS_Convert::convertDSBlock(int blockType, int begin_i, int end_i) {
 
 bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
     QStringList converted;
-    QStringList includeConverted = {"#include \"ds_core.ds-h\""};
+    QStringList includeConverted = {"#include \"ds_global.ds-h\"", "#include \"ds_core.ds-h\""};
     int i = begin_i; // line number
     while (++i != end_i) {
         QString line = lines_.at(i);
@@ -204,21 +218,81 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
         qDebug() << fieldName;
 
         if (fieldName == "gravity") {
-            converted.append("double " + varName + "=" + value + ";");
+            converted.append("double " + varName + " = " + value + ";");
         } else if (fieldName == "include") {
             QStringList includeStatements = value.split(",;", Qt::SkipEmptyParts);
             for (const auto& s : includeStatements)  includeConverted.append("#include " + s);
         } else if (fieldName == "version") {
-            converted.append("const char* " + varName + "=" + value + ";");
+            converted.append("const char* " + varName + " = " + value + ";");
         }
     }
-    converted.append("");
     includeConverted.append("");
+    converted.append("\nint main(int argc, char* argv[]) {");
     if (!writeLines(includeConverted)) return false;
     if (!writeLines(converted)) return false;
     return true;
 }
 
+bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
+    return true;
+}
+
 bool DS_Convert::convert_DS_PROCESS(int begin_i, int end_i) {
+    QStringList converted;
+    int i = begin_i; // line number
+    while (++i != end_i) {
+        QString trimmedLine = lines_.at(i).trimmed();
+        if (trimmedLine.length() > 3 && trimmedLine.left(3) == "```") {
+            int j = i + 1;
+            for (;j < end_i; j++) {
+                QString trimmedLine_ = lines_.at(j).trimmed();
+                if (trimmedLine_.length() == 4 && trimmedLine_.left(4) == "```!") break;
+            }
+            if (j >= end_i) {
+                // ERROR: unclosed TASK calling (no ```! for a ```)
+                return false;
+            }
+            if (trimmedLine.length() == 3) {
+                // ERROR: no task name specified
+                return false;
+            }
+            QString taskName = trimmedLine.mid(3).trimmed();
+            if (!convert_DS_CALL_TASK(taskName, i, j)) return false;
+            i = j;
+        } else converted.append(trimmedLine);
+    }
+    converted.append("return 0;}\n");
+    return writeLines(converted);
+}
+
+bool DS_Convert::convert_DS_CALL_TASK(QString task, int begin_i, int end_i) {
+    // Only built-in tasks are supported in this version.
+    QStringList args;   // arguments in task
+    QStringList values; // values in task for arguments (i.e. after ':')
+    int i = begin_i;
+    while (++i < end_i) {
+        QString trimmedLine = lines_.at(i).trimmed();
+        int k = trimmedLine.indexOf(':');
+        if (k != -1) {
+            args.append(trimmedLine.left(k).remove(QChar('\"')).simplified().toLower());
+            if (!args.isEmpty()) values.append(trimmedLine.mid(k + 1));
+        }
+    }
+    QString arg_dice;
+    if (task.trimmed().toLower() == "simu") {
+        for (int m = 0; m != args.size(); m++) {
+            QString arg = args.at(m);
+            QString value = values.at(m);
+            if (arg == "dice") {
+
+            } else if (arg == "velocity")  {
+
+            } // else
+        }
+    } else if (task.trimmed().toLower() == "prob") {
+
+    } else {
+        // Just ignore
+    }
     return true;
 }

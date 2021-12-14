@@ -19,8 +19,10 @@ int main(int argc, char* argv[])
     parser.addOptions({
         {{"d", "debug"},
             QCoreApplication::translate("main", "Convert in debug mode.")},
-        {{"I", "include"},
-            QCoreApplication::translate("main", "Include path. (default: ../include)")}
+        // {{"I", "include"},
+        //    QCoreApplication::translate("main", "Include path. (default: ../include)")},
+        {{"s", "style"},
+            QCoreApplication::translate("main", "Set the style for the converted file.")}
     });
 
     parser.process(a);

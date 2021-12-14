@@ -7,8 +7,6 @@
 
 #ifndef DS_CONVERT_H
 #define DS_CONVERT_H
-#include <QFileInfo>
-#include <QTextStream>
 #include "global.h"
 
 class DS_Convert
@@ -30,6 +28,14 @@ public:
      * @retval false The conversion fails.
      */
     bool convert();
+
+    /**
+     * @brief Style the converted cpp file using astyle.
+     * @return status
+     * @retval true The conversion succeeds.
+     * @retval false The conversion fails.
+     */
+    bool style();
 
     /**
      * @brief Set convert source and destination files.
@@ -134,6 +140,16 @@ private:
     bool convert_DS_GLOBAL(int begin_i, int end_i);
 
     /**
+     * @brief Convert DS DICE.
+     * @param begin_i line number of start block symbol (#DS_BEGIN_DICE)
+     * @param end_i line number of end block symbol (#DS_END_DICE)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convert_DS_DICE(int begin_i, int end_i);
+
+    /**
      * @brief Convert DS PROCESS.
      * @param begin_i line number of start block symbol (#DS_BEGIN_PROCESS)
      * @param end_i line number of end block symbol (#DS_END_PROCESS)
@@ -142,6 +158,17 @@ private:
      * @retval false there exists error
      */
     bool convert_DS_PROCESS(int begin_i, int end_i);
+
+    /**
+     * @brief Convert DS TASK CALL in DS PROCESS
+     * @param task the task being called
+     * @param begin_i line number of start block symbol (```)
+     * @param end_i line number of end block symbol (```!)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convert_DS_CALL_TASK(QString task, int begin_i, int end_i);
 
 };
 
