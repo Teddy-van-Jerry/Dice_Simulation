@@ -45,38 +45,64 @@ public:
     void setDebug(bool debug);
 
 private:
-    QString sourceFile_; /**< Source file to convert (.ds, .ds-cpp) */
+    QString sourceFile_; /**< Source file to convert (.ds, .ds-cpp). */
 
-    QString destinationFile_; /**< Converted .cpp file */
+    QString destinationFile_; /**< Converted .cpp file. */
 
-    QStringList lines_; /**< Source lines */
+    QStringList lines_; /**< Source lines. */
 
-    bool debug_ = false; /**< Debug option */
+    bool debug_ = false; /**< Debug option. */
 
     QVector<QStringPair> blockDefPairs {
-        {"DS_BEGIN_GLOBAL" , "DS_END_GLOBAL"},
-        {"DS_BEGIN_DICE"   , "DS_END_DICE"},
-        {"DS_BEGIN_TASK"   , "DS_END_TASK"},
-        {"DS_BEGIN_CPP"    , "DS_END_CPP"},
-        {"DS_BEGIN_PROCESS", "DS_END_PROCESS"}
+        {"#DS_BEGIN_GLOBAL" , "#DS_END_GLOBAL"},
+        {"#DS_BEGIN_DICE"   , "#DS_END_DICE"},
+        {"#DS_BEGIN_TASK"   , "#DS_END_TASK"},
+        {"#DS_BEGIN_CPP"    , "#DS_END_CPP"},
+        {"#DS_BEGIN_PROCESS", "#DS_END_PROCESS"}
     };
 
     /**
-     * @brief read source file and set lines_.
+     * @brief Initialize the converted file.
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
      */
-    void readFileAll();
+    bool initConvert();
 
     /**
-     * @brief write line into destination file.
+     * @brief Read source file and set lines_.
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool readFileAll();
+
+    /**
+     * @brief Write line into destination file.
      * @param line text of the line
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
      */
-    void writeLine(const QString& line) const;
+    bool writeLine(const QString& line) const;
 
     /**
-     * @brief write lines into destination file.
+     * @brief Write lines into destination file.
      * @param lines text lines
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
      */
-    void writeLines(const QStringList& lines) const;
+    bool writeLines(const QStringList& lines) const;
+
+    /**
+     * @brief Convert the defination of variable from ds to cpp.
+     * @param type C++ data type
+     * @param varName variable name
+     * @param value value of the variable
+     * @return the string of the cpp code
+     */
+    QString convertVarDef(QString type, QString varName, const QString& value) const;
 
     /**
      * @brief Remove comments in lines_.
@@ -85,6 +111,37 @@ private:
      * @retval false there exists error
      */
     bool removeComments();
+
+    /**
+     * @brief Convert the DS Block.
+     * @param blockType index of blockDefPairs
+     * @param begin_i line number of start block symbol (#DS_BEGIN_XXX)
+     * @param end_i line number of end block symbol (#DS_END_XXX)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convertDSBlock(int blockType, int begin_i, int end_i);
+
+    /**
+     * @brief Convert DS GLOBAL.
+     * @param begin_i line number of start block symbol (#DS_BEGIN_GLOBAL)
+     * @param end_i line number of end block symbol (#DS_END_GLOBAL)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convert_DS_GLOBAL(int begin_i, int end_i);
+
+    /**
+     * @brief Convert DS PROCESS.
+     * @param begin_i line number of start block symbol (#DS_BEGIN_PROCESS)
+     * @param end_i line number of end block symbol (#DS_END_PROCESS)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convert_DS_PROCESS(int begin_i, int end_i);
 
 };
 

@@ -6,11 +6,15 @@
  */
 
 #DS_BEGIN_GLOBAL
-    "Version": "0.0.4" // Version of Dice Simulation
+    "Version": ["ds_version"] "0.0.4" // Version of Dice Simulation
     "Gravity": 9.81 // [N/kg]
 #DS_END_GLOBAL
 
-``` simu
-    "Dice": test_dice
-    ""
-```!
+#DS_BEGIN_PROCESS
+    for (int i = 0; i != 100; i++) {
+        ``` simu
+            "Dice": test_dice
+            "Print": true
+        ```! // simu
+    }
+#DS_END_PROCESS
