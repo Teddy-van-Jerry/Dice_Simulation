@@ -37,14 +37,15 @@ int main(int argc, char** argv) {
     
     
     // ====== Create a Cylinder ======
+    // Use ConvexMeshShape to approximate a cylinder.
     // Be cafeful to set vertices of a face as counter clockwise
     // order as seen from the outside of your convex mesh.
     
     RigidBody* body = world->createRigidBody(transform);
     
-    const int   cylinderSides = 4;
-    const float cylinderR     = 5;
-    const float cylinderH     = 4;
+    const int   cylinderSides = 1000; // number of side faces
+    const float cylinderR     = 5; // radius [m]
+    const float cylinderH     = 4; // height [m]
     // Array with the vertices coordinates of the convex mesh
     float vertices[6 * cylinderSides]; // 2 * cylinderSides * 3
     for (int i = 0; i != cylinderSides; i++) {
