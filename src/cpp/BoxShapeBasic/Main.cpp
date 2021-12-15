@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     Vector3 initVelocity(-1, 0, 0);
     body->setLinearVelocity(initVelocity);
 
-    const decimal timeStep = 1.0f / 6.0f;
+    const decimal timeStep = 1.0f / 60.0f;
 
     // Step the simulation a few steps
     for (int i=0; i < 100; i++) {

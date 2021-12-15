@@ -228,6 +228,11 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
     }
     includeConverted.append("");
     converted.append("\nint main(int argc, char* argv[]) {");
+    converted.append("PhysicsCommon physicsCommon;\nPhysicsWorld* world = physicsCommon.createPhysicsWorld();");
+    converted.append("BoxShape* floorShape = physicsCommon.createBoxShape(Vector3(1000000, 1, 1000000));");
+    converted.append("RigidBody* floor = world->createRigidBody(Vector3(0, -1, 0), Quaternion::identity());");
+    converted.append("floor->setType(BodyType::STATIC);");
+    converted.append("floor>addCollider(floorShape, Transform::identity());");
     if (!writeLines(includeConverted)) return false;
     if (!writeLines(converted)) return false;
     return true;
@@ -278,16 +283,19 @@ bool DS_Convert::convert_DS_CALL_TASK(QString task, int begin_i, int end_i) {
             if (!args.isEmpty()) values.append(trimmedLine.mid(k + 1));
         }
     }
-    QString arg_dice;
+    QString arg_dice, arg_position, arg_velocity, ang_angular_velocity, arg_print;
     if (task.trimmed().toLower() == "simu") {
         for (int m = 0; m != args.size(); m++) {
             QString arg = args.at(m);
             QString value = values.at(m);
-            if (arg == "dice") {
+            if      (arg == "dice")              arg_dice             = value;
+            else if (arg == "position")          arg_position         = value;
+            else if (arg == "velocity")          arg_velocity         = value;
+            else if (arg == "angular_velocity")  ang_angular_velocity = value;
+            else if (arg == "print")             arg_print            = value;
+            else {
 
-            } else if (arg == "velocity")  {
-
-            } // else
+            }
         }
     } else if (task.trimmed().toLower() == "prob") {
 
