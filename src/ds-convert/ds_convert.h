@@ -59,7 +59,11 @@ private:
 
     bool debug_ = false; /**< Debug option. */
 
-    bool mainConverted = false; /** Tag indicating whether mainConvert has been called. */
+    bool mainConverted = false; /**< Tag indicating whether mainConvert has been called. */
+
+    int taskID = -1; /**< Each DS TASK CALL will have a different ID */
+
+    QString gravityName = "gravity"; /**< Variable name for gravity defined by user. */
 
     QVector<QStringPair> blockDefPairs {
         {"#DS_BEGIN_GLOBAL" , "#DS_END_GLOBAL"},
@@ -134,7 +138,7 @@ private:
      * @brief ensure the bracket at both sides (i.e. add '(' or ')' if there isn't)
      * @param str the string to ensure
      */
-    void ensureBacket(QString& str);
+    void ensureBracket(QString& str);
 
     /**
      * @brief Convert the DS Block.
@@ -196,7 +200,7 @@ private:
      * @retval true no error
      * @retval false there exists error
      */
-    bool convert_DS_CALL_TASK(QString task, int begin_i, int end_i);
+    bool convert_DS_TASK_CALL(QString task, int begin_i, int end_i);
 
 };
 

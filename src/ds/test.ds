@@ -7,7 +7,7 @@
 
 #DS_BEGIN_GLOBAL
     "Version": ["ds_version"] "0.0.4" // Version of Dice Simulation
-    "Gravity": 9.81 // [N/kg]
+    "Gravity": ["g"] 9.81 // [N/kg]
 #DS_END_GLOBAL
 
 #DS_BEGIN_CPP
@@ -49,8 +49,8 @@
     for (int i = 0; i != 100; i++) {
         std::cout << "Round " << i << ":" << std::endl;
         ``` simu
-            "Dice": test_dice
-            "Print": true
+            "Dice": CylinderDice
+            "Print": "Position: ", $position, '\t', "Velocity: ", $velocity, ;
         ```! // simu
     }
     std::cout << "End of process" << std::endl;

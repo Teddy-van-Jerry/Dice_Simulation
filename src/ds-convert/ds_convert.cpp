@@ -63,7 +63,9 @@ bool DS_Convert::initConvert() {
     if (f.open(QIODevice::WriteOnly)) {
         QTextStream out(&f);
         out << "// Converted by Dice Simulation " << __DS_VERSION_STR__
-            << " at " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss UTC") << ".\n" << Qt::endl;
+            << " at " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss UTC") << ".\n"
+            << "// Website: https://dice.teddy-van-jerry.org\n"
+            << "// GitHub Repo: https://github.com/Teddy-van-Jerry/Dice_Simulation\n" << Qt::endl;
         f.close();
         return true;
     } else {
@@ -75,13 +77,14 @@ bool DS_Convert::initConvert() {
 bool DS_Convert::mainConvert() {
     if (mainConverted) return true;
     QStringList converted;
-    converted.append("\nint main(int argc, char* argv[]) {");
-    converted.append("\t// ====== floor ====== //");
-    converted.append("PhysicsCommon physicsCommon;\nPhysicsWorld* world = physicsCommon.createPhysicsWorld();");
-    converted.append("BoxShape* floor_shape = physicsCommon.createBoxShape(Vector3(1000000, 1, 1000000));");
-    converted.append("RigidBody* floor = world->createRigidBody(Vector3(0, -1, 0), Quaternion::identity());");
-    converted.append("floor->setType(BodyType::STATIC);");
-    converted.append("floor>addCollider(floor_shape, Transform::identity());\n");
+    converted << "\nint main(int argc, char* argv[]) {"
+              << "\t// ====== floor ====== //"
+              << "PhysicsCommon physicsCommon;\nPhysicsWorld* world = physicsCommon.createPhysicsWorld();"
+              << "world->setGravity(Vector3(0, -" + gravityName + ", 0));"
+              << "BoxShape* floor_shape = physicsCommon.createBoxShape(Vector3(1000000, 1, 1000000));"
+              << "RigidBody* floor = world->createRigidBody(Vector3(0, -1, 0), Quaternion::identity());"
+              << "floor->setType(BodyType::STATIC);"
+              << "floor>addCollider(floor_shape, Transform::identity());\n";
     mainConverted = true;
     return writeLines(converted);
 }
@@ -186,7 +189,7 @@ bool DS_Convert::removeComments() {
     return !comment_row;
 }
 
-void DS_Convert::ensureBacket(QString &str) {
+void DS_Convert::ensureBracket(QString &str) {
     if (str.isEmpty()) str = "()";
     else {
         if (str.at(0) != '(') str.insert(0, '(');
@@ -247,6 +250,7 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
 
         if (fieldName == "gravity") {
             converted.append("double " + varName + " = " + value + ";");
+            gravityName = varName;
         } else if (fieldName == "include") {
             QStringList includeStatements = value.split(",;", Qt::SkipEmptyParts);
             for (const auto& s : includeStatements)  includeConverted.append("#include " + s);
@@ -298,10 +302,10 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
         else if (label == "mass")             _mass             = value;
         else if (label == "density")          _density          = value;
     }
-    ensureBacket(_position);
-    ensureBacket(_orientation);
-    ensureBacket(_velocity);
-    ensureBacket(_angular_velocity);
+    ensureBracket(_position);
+    ensureBracket(_orientation);
+    ensureBracket(_velocity);
+    ensureBracket(_angular_velocity);
     _name.remove(QChar('\"'));
     _type.remove(QChar('\"'));
     if (_name.isEmpty()) {
@@ -317,7 +321,7 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
             // just ignore this block
             return true;
         }
-        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", QVector3" + _orientation + "));"
+        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", Quaternion" + _orientation + "));"
                   << "BoxShape* " + _name + "_shape = physicsCommon.createBoxShape(QVector(" + _size_a + ", "  + _size_b + ", " + _size_c + "));"
                   << _name + "_body->addCollider(" + _name + "_shape, Transform::identity());";
         if (_velocity.length() > 2) converted.append(_name + "_body->setLinearVelocity(Vector3" + _velocity + ");");
@@ -410,7 +414,7 @@ bool DS_Convert::convert_DS_PROCESS(int begin_i, int end_i) {
                 return false;
             }
             QString taskName = trimmedLine.mid(3).trimmed();
-            if (!convert_DS_CALL_TASK(taskName, i, j)) return false;
+            if (!convert_DS_TASK_CALL(taskName, i, j)) return false;
             i = j;
         } else converted.append(trimmedLine);
     }
@@ -418,7 +422,9 @@ bool DS_Convert::convert_DS_PROCESS(int begin_i, int end_i) {
     return writeLines(converted);
 }
 
-bool DS_Convert::convert_DS_CALL_TASK(QString task, int begin_i, int end_i) {
+bool DS_Convert::convert_DS_TASK_CALL(QString task, int begin_i, int end_i) {
+    taskID++; // increment the DS TASK CALL ID
+    QString _ID = QString::number(taskID); // QString of taskID
     // Only built-in tasks are supported in this version.
     QStringList args;   // arguments in task
     QStringList values; // values in task for arguments (i.e. after ':')
@@ -431,24 +437,89 @@ bool DS_Convert::convert_DS_CALL_TASK(QString task, int begin_i, int end_i) {
             if (!args.isEmpty()) values.append(trimmedLine.mid(k + 1));
         }
     }
-    QString _dice, _position, _velocity, _angular_velocity, _print;
+    QStringList converted {"\t// ====== DS TASK: " + task + " ====== //"};
+    QString _dice, _position, _orientation, _velocity, _angular_velocity, _friction, _bounciness, _damping,
+            _angular_damping, _mass, _density, _print, _print_condition, _time_step, _time_limit, _stop_threshold,
+            _before_update, _after_update_1, _after_update_2, _after_update_3;
     if (task.trimmed().toLower() == "simu") {
         for (int m = 0; m != args.size(); m++) {
             QString arg = args.at(m);
             QString value = values.at(m);
-            if      (arg == "dice")              _dice             = value;
-            else if (arg == "position")          _position         = value;
-            else if (arg == "velocity")          _velocity         = value;
-            else if (arg == "angular_velocity")  _angular_velocity = value;
-            else if (arg == "print")             _print            = value;
-            else {
+            if      (arg == "dice")             _dice             = value;
+            else if (arg == "position")         _position         = value;
+            else if (arg == "orientation")      _orientation      = value;
+            else if (arg == "velocity")         _velocity         = value;
+            else if (arg == "angular_velocity") _angular_velocity = value;
+            else if (arg == "friction")         _friction         = value;
+            else if (arg == "bouciness")        _bounciness       = value;
+            else if (arg == "damping")          _damping          = value;
+            else if (arg == "angular_damping")  _angular_damping  = value;
+            else if (arg == "mass")             _mass             = value;
+            else if (arg == "density")          _density          = value;
+            else if (arg == "print")            _print            = value;
+            else if (arg == "print_condition")  _print_condition  = value;
+            else if (arg == "time_step")        _time_step        = value;
+            else if (arg == "time_limit")       _time_limit       = value;
+            else if (arg == "stop_threshold")   _stop_threshold   = value;
+            else if (arg == "before_update")    _before_update    = value;
+            else if (arg == "after_update_1")   _after_update_1   = value;
+            else if (arg == "after_update_2")   _after_update_2   = value;
+            else if (arg == "after_update_3")   _after_update_3   = value;
+        }
+        QString _name = _dice; // alias so I can copy code from convert_DS_Dice
+        ensureBracket(_position);
+        ensureBracket(_orientation);
+        ensureBracket(_velocity);
+        ensureBracket(_angular_velocity);
+        if (_time_step.isEmpty()) _time_step = "1.0f / 60.0f";
+        if (_time_limit.isEmpty()) _time_limit = "300000.0f";
+        if (_print_condition.isEmpty()) _print_condition = "true";
+        if (_stop_threshold.isEmpty()) _stop_threshold = "1E-8";
 
+        _name.remove(QChar('\"'));
+        converted << "const decimal timeStep_" + _ID + " = " + _time_step + ";"
+                  << "for (int i = 0; i < int((" + _time_limit + ") / (" + _time_step + ")); i++) {";
+        if (!_before_update.isEmpty()) converted << _before_update;
+        converted << "world->update(timeStep_" + _ID + ");"
+                  << "const Transform& transform = " + _name + "_body->getTransform();"
+                  << "Vector3& position = transform->getPosition();"
+                  << "Vector3& velocity = transform->getLinearVelocity();"
+                  << "Vector3& angular_velocity = transform->getAngularVelocity();"
+                  << "const Quaternion& orientation = transform.getOrientation();";
+        if (!_after_update_1.isEmpty()) converted << _after_update_1;
+        converted << "if (" + _print_condition + ") {";
+        QStringList printContents = _print.split(',', Qt::SkipEmptyParts);
+        for (const auto& label_ : printContents) {
+            QString label = label_.trimmed();
+            if (label == ";") {
+                converted << "std::cout << std::endl;";
+            } else if (label == "$position") {
+                converted << "std::cout << \"(\" << position.x << \", \" << position.y << \", \" << position.z << \")\";";
+            } else if (label == "$velocity") {
+                converted << "std::cout << \"(\" << velocity.x << \", \" << velocity.y << \", \" << velocity.z << \")\";";
+            } else if (label == "$angular_velocity") {
+                converted << "std::cout << \"(\" << angular_velocity.x << \", \" << angular_velocity.y << \", \" << angular_velocity.z << \")\";";
+            } else if (label == "$orientation") {
+                converted << "std::cout << \"(\" << orientation.x << \", \" << orientation.y << \", \" << orientation.z << \", \" << orientation.w << \")\";";
+            } else if (label == "|$velocity|") {
+                converted << "std::cout << velocity->length();";
+            } else if (label == "|$angular_velocity|") {
+                converted << "std::cout << angular_velocity->length();";
+            } else {
+                converted << "std::cout << " + label + ";";
             }
         }
+        converted << "}";
+        if (!_after_update_2.isEmpty()) converted << _after_update_2;
+        converted << "if (velocity->length() <= stop_threshold && angular_velocity->length() <= stop_threshold) break;";
+        if (!_after_update_3.isEmpty()) converted << _after_update_3;
+        converted << "}";
+
     } else if (task.trimmed().toLower() == "prob") {
 
     } else {
         // Just ignore
+        qDebug() << "WARNING: unsupported TASK name";
     }
-    return true;
+    return writeLines(converted << "");
 }

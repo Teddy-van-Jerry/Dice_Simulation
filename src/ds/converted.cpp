@@ -1,9 +1,11 @@
-// Converted by Dice Simulation 0.0.4 at 2021-12-16 04:52:09 UTC.
+// Converted by Dice Simulation 0.0.4 at 2021-12-16 13:02:11 UTC.
+// Website: https://dice.teddy-van-jerry.org
+// GitHub Repo: https://github.com/Teddy-van-Jerry/Dice_Simulation
 
 #include "ds_core.ds-h"
 
 const char* ds_version = "0.0.4";
-double gravity = 9.81;
+double g = 9.81;
 
 void foo1() {
     std::cout << "foo1" << std::endl;
@@ -18,13 +20,14 @@ int main(int argc, char* argv[]) {
     // ====== floor ====== //
     PhysicsCommon physicsCommon;
     PhysicsWorld* world = physicsCommon.createPhysicsWorld();
+    world->setGravity(Vector3(0, -g, 0));
     BoxShape* floor_shape = physicsCommon.createBoxShape(Vector3(1000000, 1, 1000000));
     RigidBody* floor = world->createRigidBody(Vector3(0, -1, 0), Quaternion::identity());
     floor->setType(BodyType::STATIC);
     floor>addCollider(floor_shape, Transform::identity());
 
     // ====== DS DICE: BoxDice ====== //
-    RigidBody* BoxDice_body = world->createRigidBody(Transform(QVector3(0, 2, 0), QVector3()));
+    RigidBody* BoxDice_body = world->createRigidBody(Transform(QVector3(0, 2, 0), Quaternion()));
     BoxShape* BoxDice_shape = physicsCommon.createBoxShape(QVector(4, 2, 1));
     BoxDice_body->addCollider(BoxDice_shape, Transform::identity());
     BoxDice_body->setLinearVelocity(Vector3(0, 0, 0));
@@ -79,6 +82,26 @@ int main(int argc, char* argv[]) {
     CylinderDice_body->setLinearVelocity(Vector3(0, 0, 0));
     CylinderDice_body->setLinearDamping(1.2);
     CylinderDice_body->getCollider(0)->getMaterial()->setFrictionCoefficient(0.2);
+
+    // ====== DS TASK: simu ====== //
+    const decimal timeStep_0 = 1.0f / 60.0f;
+    for (int i = 0; i < int((300000.0f) / (1.0f / 60.0f)); i++) {
+        world->update(timeStep_0);
+        const Transform& transform =  CylinderDice_body->getTransform();
+        Vector3& position = transform->getPosition();
+        Vector3& velocity = transform->getLinearVelocity();
+        Vector3& angular_velocity = transform->getAngularVelocity();
+        const Quaternion& orientation = transform.getOrientation();
+        if (true) {
+            std::cout << "Position: ";
+            std::cout << "(" << position.x << ", " << position.y << ", " << position.z << ")";
+            std::cout << '\t';
+            std::cout << "Velocity: ";
+            std::cout << "(" << velocity.x << ", " << velocity.y << ", " << velocity.z << ")";
+            std::cout << std::endl;
+        }
+        if (velocity->length() <= stop_threshold && angular_velocity->length() <= stop_threshold) break;
+    }
 
     for (int i = 0; i != 100; i++) {
         std::cout << "Round " << i << ":" << std::endl;
