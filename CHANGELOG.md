@@ -1,6 +1,15 @@
 # Change Log
 
-## Version 0.1 [Unreleased]
+## Version 0.1
+
+<details><summary><b>0.1.0</b> (2021/12/16)</summary><p>
+  
+  - Finish the basic functions of ds-convert.
+  - Add ReactPhysics3D Test: *CylinderShapeBasic*.
+  - Add `ds_global.ds-h` and `ds_core.ds-h`.
+  - Design icon for the application.
+  
+</p></details>
 
 ## Version 0.0
 

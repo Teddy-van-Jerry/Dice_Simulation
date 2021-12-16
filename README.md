@@ -8,8 +8,8 @@ This is script-based software to enable different kinds of dice simulation in a 
 
 |  Component  | Version | Description |
 | :---------: | :-----: | :---------: |
-|   Project   |  0.0.4  | Main project. |
-| ds-convert  |  0.0.1  | Convert `ds` code to standard `cpp` code. |
+|   Project   |  0.1.0  | Main project. |
+| ds-convert  |  0.1.0  | Convert `ds` code to standard `cpp` code. |
 | ds-compile  |    -    | Compile the converted `cpp` code. |
 |   ds-help   |    -    |             |
 | ds-maintain |    -    |             |
@@ -18,8 +18,7 @@ This is script-based software to enable different kinds of dice simulation in a 
 
 > Documentation version will follow the project version.
 
-Currently, using ReactPhysics3D directly from C++ is being tested.
-Sample files are in `src/cpp`.
+In this version, basic functions of ds-convert are achieved but tests have not been done.
 
 ## Project Schedule
 
