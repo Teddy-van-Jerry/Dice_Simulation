@@ -1,0 +1,20 @@
+/**
+ * @brief Core include file for Dice Simulation
+ *
+ * @date 2021-12-16
+ * @version 0.0.1
+ * @author Teddy van Jerry
+ */
+
+#ifndef DS_CORE_DS_H
+#define DS_CORE_DS_H
+
+#include <reactphysics3d/reactphysics3d.h>
+#include <iostream>
+#include <cmath>
+#include "ds_global.ds-h"
+
+// ReactPhysics3D namespace
+using namespace reactphysics3d;
+
+#endif // DS_CORE_DS_H

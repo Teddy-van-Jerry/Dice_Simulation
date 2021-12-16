@@ -59,3 +59,6 @@ compile_commands.json
 # Mac OS X
 .DS_Store
 __MACOSX
+
+# Microsoft Office Temp Files
+~$*
