@@ -59,6 +59,8 @@ private:
 
     bool debug_ = false; /**< Debug option. */
 
+    bool mainConverted = false; /** Tag indicating whether mainConvert has been called. */
+
     QVector<QStringPair> blockDefPairs {
         {"#DS_BEGIN_GLOBAL" , "#DS_END_GLOBAL"},
         {"#DS_BEGIN_DICE"   , "#DS_END_DICE"},
@@ -74,6 +76,16 @@ private:
      * @retval false there exists error
      */
     bool initConvert();
+
+    /**
+     * @brief Add int main() and floor settings
+     * @details This will check whether mainConvert() has been called before,
+     *          so this function can be called when there is a possibility.
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool mainConvert();
 
     /**
      * @brief Read source file and set lines_.
@@ -119,6 +131,12 @@ private:
     bool removeComments();
 
     /**
+     * @brief ensure the bracket at both sides (i.e. add '(' or ')' if there isn't)
+     * @param str the string to ensure
+     */
+    void ensureBacket(QString& str);
+
+    /**
      * @brief Convert the DS Block.
      * @param blockType index of blockDefPairs
      * @param begin_i line number of start block symbol (#DS_BEGIN_XXX)
@@ -148,6 +166,16 @@ private:
      * @retval false there exists error
      */
     bool convert_DS_DICE(int begin_i, int end_i);
+
+    /**
+     * @brief Convert DS CPP.
+     * @param begin_i line number of start block symbol (#DS_BEGIN_CPP)
+     * @param end_i line number of end block symbol (#DS_END_CPP)
+     * @return status
+     * @retval true no error
+     * @retval false there exists error
+     */
+    bool convert_DS_CPP(int begin_i, int end_i);
 
     /**
      * @brief Convert DS PROCESS.

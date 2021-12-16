@@ -10,11 +10,48 @@
     "Gravity": 9.81 // [N/kg]
 #DS_END_GLOBAL
 
+#DS_BEGIN_CPP
+    void foo1() {
+        std::cout << "foo1" << std::endl;
+    }
+#DS_END_CPP
+
+#DS_BEGIN_CPP
+    void foo2() {
+        std::cout << "foo2" << std::endl;
+    }
+#DS_END_CPP
+
+#DS_BEGIN_DICE
+    "Name": BoxDice
+    "Type": box // Dice Type ("Box", "Cylinder")
+    "Size_a": 4
+    "Size_b": 2
+    "Size_c": 1
+    "Damping": 1.2 // Velocity Damping
+    "Friction": 0.2 // Friction Coefficient
+    "Position": (0, 2, 0) // Initial Position
+    "Velocity": (0, 0, 0) // Initial Velocity
+#DS_END_DICE
+
+#DS_BEGIN_DICE
+    "Name": CylinderDice
+    "Type": "cylinder" // Dice Type ("Box", "Cylinder")
+    "Size_r": 4
+    "Size_h": 2
+    "Damping": 1.2 // Velocity Damping
+    "Friction": 0.2 // Friction Coefficient
+    "Position": (0, 2, 0) // Initial Position
+    "Velocity": (0, 0, 0) // Initial Velocity
+#DS_END_DICE
+
 #DS_BEGIN_PROCESS
     for (int i = 0; i != 100; i++) {
+        std::cout << "Round " << i << ":" << std::endl;
         ``` simu
             "Dice": test_dice
             "Print": true
         ```! // simu
     }
+    std::cout << "End of process" << std::endl;
 #DS_END_PROCESS
