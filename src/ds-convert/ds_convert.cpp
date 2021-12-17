@@ -296,7 +296,7 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
         else if (label == "velocity")         _velocity         = value;
         else if (label == "angular_velocity") _angular_velocity = value;
         else if (label == "friction")         _friction         = value;
-        else if (label == "bouciness")        _bounciness       = value;
+        else if (label == "bounciness")       _bounciness       = value;
         else if (label == "damping")          _damping          = value;
         else if (label == "angular_damping")  _angular_damping  = value;
         else if (label == "mass")             _mass             = value;
