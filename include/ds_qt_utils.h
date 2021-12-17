@@ -1,4 +1,5 @@
 /**
+ * @file ds_qt_utils.h
  * @brief Qt utility functions for global use
  *
  * @date 2021-12-11

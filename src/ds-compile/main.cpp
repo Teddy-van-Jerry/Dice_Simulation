@@ -6,21 +6,23 @@
 int main(int argc, char* argv[])
 {
     QCoreApplication a(argc, argv);
-    QCoreApplication::setApplicationName("ds-convert");
-    QCoreApplication::setApplicationVersion(__DS_CONVERT_VERSION_STR__);
+    QCoreApplication::setApplicationName("ds-compile");
+    QCoreApplication::setApplicationVersion(__DS_COMPILE_VERSION_STR__);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Dice Simulation Convert");
+    parser.setApplicationDescription("Dice Simulation Compile");
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument("source", QCoreApplication::translate("main", "Dice Simulation source file (*.ds, *.ds-cpp) to convert."));
-    parser.addPositionalArgument("destination", QCoreApplication::translate("main", "Destination file of the converted cpp file."));
+    parser.addPositionalArgument("source", QCoreApplication::translate("main", "Dice Simulation source file (*.ds, *.ds-cpp) to compile or converted cpp file."));
+    parser.addPositionalArgument("destination", QCoreApplication::translate("main", "Destination file of the executable."));
 
     parser.addOptions({
         {{"d", "debug"},
-            QCoreApplication::translate("main", "Convert in debug mode.")},
-        // {{"I", "include"},
-        //    QCoreApplication::translate("main", "Include path. (default: ../include)")},
+            QCoreApplication::translate("main", "Compiles in debug mode.")},
+        {{"I", "include"},
+            QCoreApplication::translate("main", "Include path (Already included: ../include).")},
+        {{"c", "convert"},
+            QCoreApplication::translate("main", "Keep converted cpp file in specified location.")},
         {{"s", "style"},
             QCoreApplication::translate("main", "Set the style for the converted file.")}
     });

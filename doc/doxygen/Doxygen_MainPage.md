@@ -1,4 +1,4 @@
-# Dice Simulation
+# Brief Information
 
 <img alt="Dice Simulation Logo" src="https://dice.teddy-van-jerry.org/wp-content/uploads/2021/12/ds-banner.png" style="max-height: 80pt;"/>
 
