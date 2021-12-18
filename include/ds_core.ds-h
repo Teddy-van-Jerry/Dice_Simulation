@@ -1,4 +1,5 @@
 /**
+ * @file ds_core.ds-h
  * @brief Core include file for Dice Simulation
  *
  * @date 2021-12-16
@@ -16,5 +17,16 @@
 
 // ReactPhysics3D namespace
 using namespace reactphysics3d;
+
+namespace ds{
+    // function prototype
+
+    /**
+     * @brief Initialize the Quaternion with four numbers.
+     * @return The normalized Quaternion
+     * @param 
+     */
+    Quaternion normalQuaternion(double x, double y, double z, double w);
+}
 
 #endif // DS_CORE_DS_H

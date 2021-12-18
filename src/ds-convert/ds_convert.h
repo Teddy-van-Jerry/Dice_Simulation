@@ -1,4 +1,5 @@
 /**
+ * @file ds-convert/ds_convert.h
  * @brief Dice Simulation Convert Class
  *
  * @date 2021-12-12
@@ -9,8 +10,11 @@
 #define DS_CONVERT_H
 #include "global.h"
 
-class DS_Convert
-{
+/**
+ * @brief The Dice Simulation Convert class
+ * @details Convert the ds file (*.ds, *.ds-cpp) into standard cpp file.
+ */
+class DS_Convert {
 public:
     DS_Convert();
 

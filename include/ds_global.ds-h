@@ -1,4 +1,5 @@
 /**
+ * @file ds_global.ds-h
  * @brief Global include file for Dice Simulation
  *
  * @date 2021-12-11
@@ -14,7 +15,7 @@
 /** ds-convert Version */
 #define __DS_CONVERT_VERSION__ 0x000100
 /** ds-compile Version */
-#define __DS_COMPILE_VERSION__ 0x000000
+#define __DS_COMPILE_VERSION__ 0x000001
 /** ds-gui Version */
 #define __DS_GUI_VERSION__ 0x000000
 

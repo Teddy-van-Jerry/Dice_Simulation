@@ -253,14 +253,13 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
             gravityName = varName;
         } else if (fieldName == "include") {
             QStringList includeStatements = value.split(",;", Qt::SkipEmptyParts);
-            for (const auto& s : includeStatements)  includeConverted.append("#include " + s);
+            for (const auto& s : includeStatements) includeConverted.append("#include " + s);
         } else if (fieldName == "version") {
             converted.append("const char* " + varName + " = " + value + ";");
         }
     }
-    if (!writeLines(includeConverted << "")) return false;
-    if (!writeLines(converted << "")) return false;
-    return true;
+    if (!writeLines(includeConverted << "using namespace ds;\n")) return false;
+    return (writeLines(converted << ""));
 }
 
 bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
@@ -296,7 +295,7 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
         else if (label == "velocity")         _velocity         = value;
         else if (label == "angular_velocity") _angular_velocity = value;
         else if (label == "friction")         _friction         = value;
-        else if (label == "bouciness")        _bounciness       = value;
+        else if (label == "bounciness")       _bounciness       = value;
         else if (label == "damping")          _damping          = value;
         else if (label == "angular_damping")  _angular_damping  = value;
         else if (label == "mass")             _mass             = value;
@@ -321,7 +320,7 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
             // just ignore this block
             return true;
         }
-        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", Quaternion" + _orientation + "));"
+        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", normalQuaternion" + _orientation + "));"
                   << "BoxShape* " + _name + "_shape = physicsCommon.createBoxShape(QVector(" + _size_a + ", "  + _size_b + ", " + _size_c + "));"
                   << _name + "_body->addCollider(" + _name + "_shape, Transform::identity());";
         if (_velocity.length() > 2) converted.append(_name + "_body->setLinearVelocity(Vector3" + _velocity + ");");
@@ -344,7 +343,7 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
                   << "const float " + _name + "_H = " + _size_h + ";"
                   << "float " + _name + "_vertices[6 * " + _cylinder_sides + "_sides];"
                   << "for (int i = 0; i != " + _name + "_sides; i++) {"
-                  << _name + "_vertices[3 * i] = " + _name + "_R * std::cos(2 * 3.14159265358979 * i / " + _name + "_sides);"
+                  << _name + "_vertices[3 * i] = -" + _name + "_R * std::cos(2 * 3.14159265358979 * i / " + _name + "_sides);"
                   << _name + "_vertices[3 * i + 1] = -" + _name + "_H / 2;"
                   << _name + "_vertices[3 * i] = " + _name + "_R * std::sin(2 * 3.14159265358979 * i / " + _name + "_sides);"
                   << _name + "_vertices[3 * (i + " + _name + "_sides)] = " + _name + "_vertices[3 * i];"
@@ -477,6 +476,14 @@ bool DS_Convert::convert_DS_TASK_CALL(QString task, int begin_i, int end_i) {
         if (_stop_threshold.isEmpty()) _stop_threshold = "1E-8";
 
         _name.remove(QChar('\"'));
+        if (_position.length() > 2) converted.append(_name + "_body->getTransform()->setPosition(Vector3" + _position + ");");
+        if (_orientation.length() > 2) converted.append(_name + "_body->getTransform()->setOrientation(normalQuaternion" + _orientation + ");");
+        if (_velocity.length() > 2) converted.append(_name + "_body->setLinearVelocity(Vector3" + _velocity + ");");
+        if (_angular_velocity.length() > 2) converted.append(_name + "_body->setAngularVelocity(Vector3" + _angular_velocity + ");");
+        if (!_damping.isEmpty()) converted.append(_name + "_body->setLinearDamping(" + _damping + ");");
+        if (!_angular_damping.isEmpty()) converted.append(_name + "_body->setAngularDamping(" + _angular_damping + ");");
+        if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setBounciness(" + _bounciness + ");");
+        if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setFrictionCoefficient(" + _friction + ");");
         converted << "const decimal timeStep_" + _ID + " = " + _time_step + ";"
                   << "for (int i = 0; i < int((" + _time_limit + ") / (" + _time_step + ")); i++) {";
         if (!_before_update.isEmpty()) converted << _before_update;

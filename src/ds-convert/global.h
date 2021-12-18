@@ -1,3 +1,10 @@
+/**
+ * @file ds-convert/global.h
+ * @brief Global Include File for ds-convert.
+ * @author Teddy van Jerry
+ * @date 2021-12-15
+ */
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
