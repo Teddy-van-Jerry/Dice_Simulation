@@ -11,20 +11,66 @@
 #define DS_CORE_DS_H
 
 #include <reactphysics3d/reactphysics3d.h>
+#include "ds_global.ds-h"
+
 #include <iostream>
 #include <cmath>
-#include "ds_global.ds-h"
+#include <random>
 
 // ReactPhysics3D namespace
 using namespace reactphysics3d;
 
+/**
+ * @namespace ds
+ * @brief Dice Simulation Namespace
+ * @details Some macro, functions and classes for Dice Simulation.
+ */
 namespace ds{
+
+    // class
+
+    /**
+     * @brief Random Number Support for Dice Simulation
+     * @details Use C++ random number engine
+     */
+    class DSRandom {
+    public:
+
+        DSRandom();
+
+        /**
+         * @brief Normal Distribution
+         * @details Use C++ random number engine
+         * @param m means
+         * @param s standard deviation
+         * @return the random number
+         */
+        double normal(double m = 0, double s = 1);
+
+        /**
+         * @brief Uniform Distribution
+         * @details Use C++ random number engine
+         * @param min min
+         * @param max max
+         * @return the random number
+         */
+        double uniform(double min = 0, double max = 1);
+
+    private:
+        std::random_device rd;
+        std::mt19937 mt;
+    };
+
     // function prototype
 
     /**
      * @brief Initialize the Quaternion with four numbers.
+     * @details \f$p=(xi,yj,zk,w)\f$
      * @return The normalized Quaternion
-     * @param 
+     * @param x \f$x\f$
+     * @param y \f$y\f$
+     * @param z \f$z\f$
+     * @param w \f$w\f$
      */
     Quaternion normalQuaternion(double x, double y, double z, double w);
 }

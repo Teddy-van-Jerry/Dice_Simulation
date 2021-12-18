@@ -256,6 +256,8 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
             for (const auto& s : includeStatements) includeConverted.append("#include " + s);
         } else if (fieldName == "version") {
             converted.append("const char* " + varName + " = " + value + ";");
+        } else if (fieldName == "random") {
+            converted.append("DSRandom " + value + "; // random engine");
         }
     }
     if (!writeLines(includeConverted << "using namespace ds;\n")) return false;

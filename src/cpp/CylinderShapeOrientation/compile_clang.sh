@@ -8,7 +8,7 @@
 # 2021/12/18
 
 # Create object file of Main.cpp
-clang++ -c -std=c++11 Main.cpp -I../../../ext/reactphysics3d/include -I../../../include -o Main.o
+clang++ -c -std=c++11 Main.cpp -I../../../include -o Main.o
 
 # Create executable
 clang++ -std=c++11 \

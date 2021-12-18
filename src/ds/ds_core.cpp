@@ -18,3 +18,15 @@ Quaternion ds::normalQuaternion(double x, double y, double z, double w) {
         return q;
     }
 }
+
+ds::DSRandom::DSRandom() : mt(rd()) {}
+
+double ds::DSRandom::normal(double m, double s) {
+    std::normal_distribution<double> n(m, s);
+    return n(mt);
+}
+
+double ds::DSRandom::uniform(double min, double max) {;
+    std::uniform_real_distribution<double> u(min, max);
+    return u(mt);
+}
