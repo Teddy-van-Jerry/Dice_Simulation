@@ -116,3 +116,5 @@ g++ -w -c "../ext/reactphysics3d/src/memory/MemoryManager.cpp" -std=c++11 -I ../
 g++ -w -c "../ext/reactphysics3d/src/utils/Profiler.cpp" -std=c++11 -I ../ext/reactphysics3d/include -o "obj/utils/Profiler.o"
 g++ -w -c "../ext/reactphysics3d/src/utils/DefaultLogger.cpp" -std=c++11 -I ../ext/reactphysics3d/include -o "obj/utils/DefaultLogger.o"
 g++ -w -c "../ext/reactphysics3d/src/utils/DebugRenderer.cpp" -std=c++11 -I ../ext/reactphysics3d/include -o "obj/utils/DebugRenderer.o"
+
+echo "Compile RP3D Finished!\n"

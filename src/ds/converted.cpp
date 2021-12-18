@@ -1,8 +1,9 @@
-// Converted by Dice Simulation 0.1.0 at 2021-12-17 09:24:01 UTC.
+// Converted by Dice Simulation 0.1.0 at 2021-12-18 05:03:53 UTC.
 // Website: https://dice.teddy-van-jerry.org
 // GitHub Repo: https://github.com/Teddy-van-Jerry/Dice_Simulation
 
 #include "ds_core.ds-h"
+using namespace ds;
 
 const char* ds_version = "0.0.4";
 double g = 9.81;
