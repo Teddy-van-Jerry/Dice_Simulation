@@ -62,3 +62,6 @@ __MACOSX
 
 # Microsoft Office Temp Files
 ~$*
+
+# Release Dir
+release/
