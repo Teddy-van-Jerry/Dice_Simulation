@@ -14,6 +14,6 @@ mkdir obj
 mkdir obj/ds
 
 # compile object files
-clang++ -w -c "../src/ds/ds_core.cpp" -std=c++11 -I../ext/reactphysics3d/include -I../include -o "obj/ds/ds_core.o"
+clang++ -w -c -o3 "../src/ds/ds_core.cpp" -std=c++11 -I../ext/reactphysics3d/include -I../include -o "obj/ds/ds_core.o"
 
 echo "Compile DS Finished!\n"

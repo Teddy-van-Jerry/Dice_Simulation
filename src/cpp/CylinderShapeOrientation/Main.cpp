@@ -17,7 +17,7 @@ using namespace ds;
 // Main function
 int main(int argc, char** argv) {
     
-    DSRandom ds_random;
+    DSRandom r;
 
     // First you need to create the PhysicsCommon object. This is a factory module
     // that you can use to create physics world and other objects. It is also responsible
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     // Create a rigid body in the world
     Vector3 position(0, 20, 0);
     Vector3 floorPosition(0, -10, 0);
-    Transform transform(position, normalQuaternion(ds_random.normal(0, 1), ds_random.normal(0, 1), ds_random.normal(0, 1), ds_random.normal(0, 1)));
+    Transform transform(position, normalQuaternion(r.normal(0, 1), r.normal(0, 1),r.normal(0, 1),r.normal(0, 1)));
     Transform floorTransform(floorPosition, Quaternion::identity());
     RigidBody* floor = world->createRigidBody(floorTransform);
     floor->setType(BodyType::STATIC);
@@ -107,6 +107,8 @@ int main(int argc, char** argv) {
     // Create the convex mesh collision shape
     ConvexMeshShape* cylinderShape = physicsCommon.createConvexMeshShape(polyhedronMesh);
     body->addCollider(cylinderShape, Transform::identity());
+    body->setLinearVelocity(Vector3(r.normal(), r.normal(), r.normal()));
+    body->setAngularVelocity(Vector3(r.normal(), r.normal(), r.normal()));
     
     
     // set damping, bounciness, friction

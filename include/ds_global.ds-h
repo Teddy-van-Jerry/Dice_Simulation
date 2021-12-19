@@ -11,7 +11,7 @@
 #define DS_GLOBAL_DS_H
 
 /** Dice Simulation Version */
-#define __DS_VERSION__ 0x000100
+#define __DS_VERSION__ 0x000101
 /** ds-convert Version */
 #define __DS_CONVERT_VERSION__ 0x000100
 /** ds-compile Version */
