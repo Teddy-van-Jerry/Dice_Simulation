@@ -27,12 +27,12 @@ int main(int argc, char* argv[])
 
     parser.process(a);
 
-    qDebug() << "Started" << Qt::endl;
+    // qDebug() << "Started" << Qt::endl;
 
     // https://doc-snapshots.qt.io/qt6-dev/qcommandlineparser.htm
     const QStringList args = parser.positionalArguments();
 
-    qDebug() << args.size() << Qt::endl;
+    // qDebug() << args.size() << Qt::endl;
     if (args.size() == 2) {
         QString sourceFile = args.at(0);
         QString destinationFile = args.at(1);

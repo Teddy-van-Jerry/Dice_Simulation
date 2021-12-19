@@ -3,7 +3,7 @@
  * @brief Global include file for Dice Simulation
  *
  * @date 2021-12-11
- * @version 0.0.1
+ * @version 0.1.1
  * @author Teddy van Jerry
  */
 
@@ -11,9 +11,9 @@
 #define DS_GLOBAL_DS_H
 
 /** Dice Simulation Version */
-#define __DS_VERSION__ 0x000100
+#define __DS_VERSION__ 0x000101
 /** ds-convert Version */
-#define __DS_CONVERT_VERSION__ 0x000100
+#define __DS_CONVERT_VERSION__ 0x000101
 /** ds-compile Version */
 #define __DS_COMPILE_VERSION__ 0x000001
 /** ds-gui Version */

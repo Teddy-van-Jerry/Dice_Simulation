@@ -2,6 +2,13 @@
 
 ## Version 0.1
 
+<details><summary><b>0.1.1</b> (2021/12/19)</summary><p>
+  
+  - Deal with bugs.
+  - Publish Release.
+  
+</p></details>
+
 <details><summary><b>0.1.0</b> (2021/12/16)</summary><p>
   
   - Finish the basic functions of ds-convert.

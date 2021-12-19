@@ -9,7 +9,7 @@ bool DS_Convert::convert() {
     initConvert();
     readFileAll();
     if (lines_.empty()) return true;
-    qDebug() << lines_; // debug
+    // qDebug() << lines_; // debug
     int i = 0; // line number index, from 0 to lines_.size() - 1
     while (i < lines_.size()) {
         QString line_simplified = lines_.at(i).simplified();
@@ -25,10 +25,11 @@ bool DS_Convert::convert() {
                     if (line_simplified == blockDefPairs.at(index).at(1)) break; // find match
                 }
                 if (j > lines_.size()) {
-                    // ERROR: unclosed DS block
+                    qDebug() << "ERROR: unclosed DS block";
                     return false;
                 }
-                if (!convertDSBlock(index, i, j)) return false; // convert the block from line i to j
+                if (convertDSBlock(index, i, j)) i = j;
+                else return false; // convert the block from line i to j
             }
         }
         i++;
@@ -39,11 +40,10 @@ bool DS_Convert::convert() {
 
 bool DS_Convert::style() {
     QProcess* styleProcess = new QProcess;
-    // QFileInfo sourceFileInfo(sourceFile_);
-    // sourceFileInfo.absoluteDir().absolutePath()
+    QFileInfo destinationFileInfo(destinationFile_);
     styleProcess->setWorkingDirectory(QCoreApplication::applicationDirPath());
     QStringList args;
-    args << "--style=java" << "-n" << destinationFile_;
+    args << "--style=java" << "-n" << destinationFileInfo.absoluteFilePath();
     styleProcess->start("astyle", args);
     styleProcess->waitForFinished();
     return true;
@@ -82,9 +82,9 @@ bool DS_Convert::mainConvert() {
               << "PhysicsCommon physicsCommon;\nPhysicsWorld* world = physicsCommon.createPhysicsWorld();"
               << "world->setGravity(Vector3(0, -" + gravityName + ", 0));"
               << "BoxShape* floor_shape = physicsCommon.createBoxShape(Vector3(1000000, 1, 1000000));"
-              << "RigidBody* floor = world->createRigidBody(Vector3(0, -1, 0), Quaternion::identity());"
+              << "RigidBody* floor = world->createRigidBody(Transform(Vector3(0, -1, 0), Quaternion::identity()));"
               << "floor->setType(BodyType::STATIC);"
-              << "floor>addCollider(floor_shape, Transform::identity());\n";
+              << "floor->addCollider(floor_shape, Transform::identity());\n";
     mainConverted = true;
     return writeLines(converted);
 }
@@ -190,6 +190,7 @@ bool DS_Convert::removeComments() {
 }
 
 void DS_Convert::ensureBracket(QString &str) {
+    str = str.trimmed();
     if (str.isEmpty()) str = "()";
     else {
         if (str.at(0) != '(') str.insert(0, '(');
@@ -238,15 +239,15 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
             // This is indeed the start symbol of variable name (optional).
             int _3 = line.indexOf(']', _2); // the end symbol of variable name.
             if (_3 == -1) {
-                // ERROR: unclosed '['
+                qDebug() << "ERROR: unclosed '['";
                 return false;
             }
             varName = line.mid(_2 + 1, _3 - _2 - 1).simplified().remove(QChar('\"'));
-            qDebug() << varName;
+            // qDebug() << varName;
             value = line.mid(_3 + 1).trimmed();
         }
 
-        qDebug() << fieldName;
+        // qDebug() << fieldName;
 
         if (fieldName == "gravity") {
             converted.append("double " + varName + " = " + value + ";");
@@ -256,6 +257,8 @@ bool DS_Convert::convert_DS_GLOBAL(int begin_i, int end_i) {
             for (const auto& s : includeStatements) includeConverted.append("#include " + s);
         } else if (fieldName == "version") {
             converted.append("const char* " + varName + " = " + value + ";");
+        } else if (fieldName == "random") {
+            converted.append("DSRandom " + value.remove(QChar('\"')) + "; // random engine");
         }
     }
     if (!writeLines(includeConverted << "using namespace ds;\n")) return false;
@@ -274,8 +277,8 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
             if (!labels.isEmpty()) values.append(trimmedLine.mid(k + 1).trimmed());
         }
     }
-    qDebug() << labels;
-    qDebug() << values;
+    // qDebug() << labels;
+    // qDebug() << values;
     QStringList converted;
     QString _name, _type, _size_a, _size_b, _size_c, _size_r, _size_h, _cylinder_sides, _position, _orientation, _velocity,
             _angular_velocity, _friction, _bounciness, _damping, _angular_damping, _mass, _density;
@@ -320,15 +323,15 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
             // just ignore this block
             return true;
         }
-        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", normalQuaternion" + _orientation + "));"
-                  << "BoxShape* " + _name + "_shape = physicsCommon.createBoxShape(QVector(" + _size_a + ", "  + _size_b + ", " + _size_c + "));"
+        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(Vector3" + _position + ", normalQuaternion" + _orientation + "));"
+                  << "BoxShape* " + _name + "_shape = physicsCommon.createBoxShape(Vector(" + _size_a + ", "  + _size_b + ", " + _size_c + "));"
                   << _name + "_body->addCollider(" + _name + "_shape, Transform::identity());";
         if (_velocity.length() > 2) converted.append(_name + "_body->setLinearVelocity(Vector3" + _velocity + ");");
         if (_angular_velocity.length() > 2) converted.append(_name + "_body->setAngularVelocity(Vector3" + _angular_velocity + ");");
         if (!_damping.isEmpty()) converted.append(_name + "_body->setLinearDamping(" + _damping + ");");
         if (!_angular_damping.isEmpty()) converted.append(_name + "_body->setAngularDamping(" + _angular_damping + ");");
-        if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setBounciness(" + _bounciness + ");");
-        if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setFrictionCoefficient(" + _friction + ");");
+        if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial().setBounciness(" + _bounciness + ");");
+        if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial().setFrictionCoefficient(" + _friction + ");");
         // mass and density will not make a difference currently.
     } else if (_type == "cylinder") {
         if (_size_r.isEmpty() || _size_r.isEmpty()) {
@@ -337,40 +340,40 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
             return true;
         }
         if (!_cylinder_sides.isEmpty()) _cylinder_sides = "1000";
-        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(QVector3" + _position + ", QVector3" + _orientation + "));"
+        converted << "RigidBody* " + _name + "_body = world->createRigidBody(Transform(Vector3" + _position + ", normalQuaternion" + _orientation + "));"
                   << "const int " + _name + "_sides = " + _cylinder_sides + ";"
                   << "const float " + _name + "_R = " + _size_r + ";"
                   << "const float " + _name + "_H = " + _size_h + ";"
-                  << "float " + _name + "_vertices[6 * " + _cylinder_sides + "_sides];"
+                  << "float " + _name + "_vertices[6 * " + _name + "_sides];"
                   << "for (int i = 0; i != " + _name + "_sides; i++) {"
                   << _name + "_vertices[3 * i] = -" + _name + "_R * std::cos(2 * 3.14159265358979 * i / " + _name + "_sides);"
                   << _name + "_vertices[3 * i + 1] = -" + _name + "_H / 2;"
-                  << _name + "_vertices[3 * i] = " + _name + "_R * std::sin(2 * 3.14159265358979 * i / " + _name + "_sides);"
+                  << _name + "_vertices[3 * i + 2] = " + _name + "_R * std::sin(2 * 3.14159265358979 * i / " + _name + "_sides);"
                   << _name + "_vertices[3 * (i + " + _name + "_sides)] = " + _name + "_vertices[3 * i];"
                   << _name + "_vertices[3 * (i + " + _name + "_sides) + 1] = " + _name + "_H / 2;"
                   << _name + "_vertices[3 * (i + " + _name + "_sides) + 2] = " + _name + "_vertices[3 * i + 2];}"
-                  << "int indices[6 * " + _name + "_sides];"
+                  << "int " + _name + "_indices[6 * " + _name + "_sides];"
                   << "for (int i = 0; i != " + _name + "_sides - 1; i++) {"
-                  << "indices[4 * i    ] = i;"
-                  << "indices[4 * i + 1] = i + 1;"
-                  << "indices[4 * i + 2] = " + _name + "_sides + i + 1;"
-                  << "indices[4 * i + 3] = " + _name + "_sides + i;"
-                  << "indices[4 * " + _name + "_sides + i] = " + _name + "_sides - i - 1;"
-                  << "indices[5 * " + _name + "_sides + i] = " + _name + "_sides + i;}"
-                  << "indices[4 * " + _name + "_sides - 4] = " + _name + "_sides - 1;"
-                  << "indices[4 * " + _name + "_sides - 3] = 0;"
-                  << "indices[4 * " + _name + "_sides - 2] = " + _name + "_sides;"
-                  << "indices[4 * " + _name + "_sides - 1] = 2 * " + _name + "_sides - 1;"
-                  << "indices[5 * " + _name + "_sides - 1] = 0;"
-                  << "indices[6 * " + _name + "_sides - 1] = 2 * " + _name + "_sides - 1;"
+                  << _name + "_indices[4 * i    ] = i;"
+                  << _name + "_indices[4 * i + 1] = i + 1;"
+                  << _name + "_indices[4 * i + 2] = " + _name + "_sides + i + 1;"
+                  << _name + "_indices[4 * i + 3] = " + _name + "_sides + i;"
+                  << _name + "_indices[4 * " + _name + "_sides + i] = " + _name + "_sides - i - 1;"
+                  << _name + "_indices[5 * " + _name + "_sides + i] = " + _name + "_sides + i;}"
+                  << _name + "_indices[4 * " + _name + "_sides - 4] = " + _name + "_sides - 1;"
+                  << _name + "_indices[4 * " + _name + "_sides - 3] = 0;"
+                  << _name + "_indices[4 * " + _name + "_sides - 2] = " + _name + "_sides;"
+                  << _name + "_indices[4 * " + _name + "_sides - 1] = 2 * " + _name + "_sides - 1;"
+                  << _name + "_indices[5 * " + _name + "_sides - 1] = 0;"
+                  << _name + "_indices[6 * " + _name + "_sides - 1] = 2 * " + _name + "_sides - 1;"
                   << "PolygonVertexArray::PolygonFace " + _name + "_polygonFaces[" + _name + "_sides + 2];"
                   << "for (int f = 0; f != " + _name + "_sides; f++) {"
                   << _name + "_polygonFaces[f].indexBase = f * 4;"
                   << _name + "_polygonFaces[f].nbVertices = 4;}"
-                  << _name + "_polygonFaces[" + _name +"_sides].indexBase = cylinderSides * 4;"
-                  << _name + "_polygonFaces[" + _name +"_sides].nbVertices = cylinderSides;"
-                  << _name + "_polygonFaces[" + _name +"_sides + 1].indexBase = cylinderSides * 5;"
-                  << _name + "_polygonFaces[" + _name +"_sides + 1].nbVertices = cylinderSides;"
+                  << _name + "_polygonFaces[" + _name +"_sides].indexBase = " + _name + "_sides * 4;"
+                  << _name + "_polygonFaces[" + _name +"_sides].nbVertices = " + _name + "_sides;"
+                  << _name + "_polygonFaces[" + _name +"_sides + 1].indexBase = " + _name + "_sides * 5;"
+                  << _name + "_polygonFaces[" + _name +"_sides + 1].nbVertices = " + _name + "_sides;"
                   << "PolygonVertexArray* " + _name + "_polygonVertexArray = new PolygonVertexArray("
                   << "2 * " + _name + "_sides, " + _name + "_vertices, 3 * sizeof(float), " + _name + "_indices,"
                   << "sizeof(int), " + _name + "_sides + 2, " + _name + "_polygonFaces,"
@@ -382,8 +385,8 @@ bool DS_Convert::convert_DS_DICE(int begin_i, int end_i) {
         if (_angular_velocity.length() > 2) converted.append(_name + "_body->setAngularVelocity(Vector3" + _angular_velocity + ");");
         if (!_damping.isEmpty()) converted.append(_name + "_body->setLinearDamping(" + _damping + ");");
         if (!_angular_damping.isEmpty()) converted.append(_name + "_body->setAngularDamping(" + _angular_damping + ");");
-        if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setBounciness(" + _bounciness + ");");
-        if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setFrictionCoefficient(" + _friction + ");");
+        if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial().setBounciness(" + _bounciness + ");");
+        if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial().setFrictionCoefficient(" + _friction + ");");
     }
     converted.append("");
     return writeLines(converted);
@@ -413,7 +416,23 @@ bool DS_Convert::convert_DS_PROCESS(int begin_i, int end_i) {
                 return false;
             }
             QString taskName = trimmedLine.mid(3).trimmed();
+            if (!writeLines(converted)) return false;
+            converted.clear();
             if (!convert_DS_TASK_CALL(taskName, i, j)) return false;
+            i = j;
+        } else if (trimmedLine == "#DS_BEGIN_DICE") {
+            int j = i + 1;
+            for (;j < end_i; j++) {
+                QString trimmedLine_ = lines_.at(j).trimmed();
+                if (trimmedLine_ == "#DS_END_DICE") break;
+            }
+            if (j >= end_i) {
+                qDebug() << "ERROR: unclosed DS TASK block";
+                return false;
+            }
+            if (!writeLines(converted)) return false;
+            converted.clear();
+            if (!convert_DS_DICE(i, j)) return false;
             i = j;
         } else converted.append(trimmedLine);
     }
@@ -476,22 +495,22 @@ bool DS_Convert::convert_DS_TASK_CALL(QString task, int begin_i, int end_i) {
         if (_stop_threshold.isEmpty()) _stop_threshold = "1E-8";
 
         _name.remove(QChar('\"'));
-        if (_position.length() > 2) converted.append(_name + "_body->getTransform()->setPosition(Vector3" + _position + ");");
-        if (_orientation.length() > 2) converted.append(_name + "_body->getTransform()->setOrientation(normalQuaternion" + _orientation + ");");
+        if (_position.length() > 2) converted.append(_name + "_body->setTransform(Transform(Vector3" + _position + ", " + _name + "_body->getTransform().getOrientation()));");
+        if (_orientation.length() > 2) converted.append(_name + "_body->setTransform(Transform(" + _name + "_body->getTransform().getPosition(), normalQuaternion" + _orientation + "));");
         if (_velocity.length() > 2) converted.append(_name + "_body->setLinearVelocity(Vector3" + _velocity + ");");
         if (_angular_velocity.length() > 2) converted.append(_name + "_body->setAngularVelocity(Vector3" + _angular_velocity + ");");
         if (!_damping.isEmpty()) converted.append(_name + "_body->setLinearDamping(" + _damping + ");");
         if (!_angular_damping.isEmpty()) converted.append(_name + "_body->setAngularDamping(" + _angular_damping + ");");
         if (!_bounciness.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setBounciness(" + _bounciness + ");");
         if (!_friction.isEmpty()) converted.append(_name + "_body->getCollider(0)->getMaterial()->setFrictionCoefficient(" + _friction + ");");
-        converted << "const decimal timeStep_" + _ID + " = " + _time_step + ";"
+        converted << "const float timeStep_" + _ID + " = " + _time_step + ";"
                   << "for (int i = 0; i < int((" + _time_limit + ") / (" + _time_step + ")); i++) {";
         if (!_before_update.isEmpty()) converted << _before_update;
         converted << "world->update(timeStep_" + _ID + ");"
                   << "const Transform& transform = " + _name + "_body->getTransform();"
-                  << "Vector3& position = transform->getPosition();"
-                  << "Vector3& velocity = transform->getLinearVelocity();"
-                  << "Vector3& angular_velocity = transform->getAngularVelocity();"
+                  << "const Vector3& position = transform.getPosition();"
+                  << "const Vector3& velocity = " + _name + "_body->getLinearVelocity();"
+                  << "const Vector3& angular_velocity = " + _name + "_body->getAngularVelocity();"
                   << "const Quaternion& orientation = transform.getOrientation();";
         if (!_after_update_1.isEmpty()) converted << _after_update_1;
         converted << "if (" + _print_condition + ") {";
@@ -509,16 +528,16 @@ bool DS_Convert::convert_DS_TASK_CALL(QString task, int begin_i, int end_i) {
             } else if (label == "$orientation") {
                 converted << "std::cout << \"(\" << orientation.x << \", \" << orientation.y << \", \" << orientation.z << \", \" << orientation.w << \")\";";
             } else if (label == "|$velocity|") {
-                converted << "std::cout << velocity->length();";
+                converted << "std::cout << velocity.length();";
             } else if (label == "|$angular_velocity|") {
-                converted << "std::cout << angular_velocity->length();";
+                converted << "std::cout << angular_velocity.length();";
             } else {
                 converted << "std::cout << " + label + ";";
             }
         }
         converted << "}";
         if (!_after_update_2.isEmpty()) converted << _after_update_2;
-        converted << "if (velocity->length() <= stop_threshold && angular_velocity->length() <= stop_threshold) break;";
+        converted << "if (velocity.length() <= " + _stop_threshold + " && angular_velocity.length() <= " + _stop_threshold + ") break;";
         if (!_after_update_3.isEmpty()) converted << _after_update_3;
         converted << "}";
 

@@ -2,7 +2,7 @@
  * @file ds-convert/ds_convert.h
  * @brief Dice Simulation Convert Class
  *
- * @date 2021-12-12
+ * @date 2021-12-19
  * @author Teddy van Jerry
  */
 
