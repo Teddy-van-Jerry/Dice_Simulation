@@ -4,17 +4,19 @@
 
 This is script-based software to enable different kinds of dice simulation in a visual way.
 
+This software is based on [Qt](https://qt.io), [ReactPhysics3D](https://github.com/DanielChappuis/reactphysics3d) and [AStyle](https://sourceforge.net/projects/astyle).
+
 ## Current Version
 
 |  Component  | Version | Description |
 | :---------: | :-----: | :---------: |
-|   Project   |  0.1.0  | Main project. |
-| ds-convert  |  0.1.0  | Convert `ds` code to standard `cpp` code. |
-| ds-compile  |    -    | Compile the converted `cpp` code. |
+|   Project   |  0.1.1  | Main project. |
+| ds-convert  |  0.1.1  | Convert `ds` code to standard `cpp` code. |
+| ds-compile  |  0.0.1  | Compile the converted `cpp` code. |
 |   ds-help   |    -    |             |
 | ds-maintain |    -    |             |
 |   ds-gui    |    -    |             |
-|   ds-vsc    |  0.0.1  | Visual Studio Code Extension for DS. |
+| [ds-vsc](https://github.com/Teddy-van-Jerry/Dice_Simulation_VSC) |  0.0.3  | Visual Studio Code Extension for DS. |
 
 > Documentation version will follow the project version.
 

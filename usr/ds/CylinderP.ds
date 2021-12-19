@@ -2,7 +2,7 @@
  * @file CylinderP.ds
  * @brief Calculate the probability of cylinder dice
  * @author Teddy van Jerry
- * @date 2021-12-18
+ * @date 2021-12-19
  */
 
 #DS_BEGIN_CPP
@@ -13,48 +13,49 @@
     "Version": "0.1.1" // Version of Dice Simulation
     "Gravity": ["g"] 9.81 // [N/kg]
     "Random": "r" // Random Number Engine Name
-    "Include": <iomanip>
+    "Include": <iomanip> // Additional C++ Library Include
 #DS_END_GLOBAL
 
 #DS_BEGIN_PROCESS
     // Test for no bounicess (shown in the paper)
-    float H_R = 2.0;
-    #DS_BEGIN_DICE
-        "Name": dice // Identifier of the Dice
-        "Type": cylinder // Dice Type ("Box", "Cylinder")
-        "Size_R": 4 // Radius of a Cylinder (Discarded for Box)
-        "Size_H": 4 * H_R // Height of a Cylinder (Discarded for Box)
-        "Cylinder_Sides": 1000 // Number of Side Faces for the Cylinder
-        "Position": (0, 1, 0) // Initial Position [m]
-        "Orientation": (0, 0, 0, 0) // Initial Position [m]
-        "Velocity": (0, 0, 0) // Initial Velocity [m/s]
-        "Angular_Velocity": (0, 0, 0) // Initial Angular Velocity [rad/s]
-        "Friction": 10 // Friction Coefficient
-        "Bounciness": 0 // Bounciness of the Material
-        "Damping": 0 // Linear Velocity Damping
-        "Angular_Damping": 0 // Angular Velocity Damping
-    #DS_END_DICE
-    // simulation
-    int TESTS = 10000;
-    int P_occur = 0;
-    for (int test = 0; test != TESTS; test++) {
-        ``` simu
-            "Dice": dice // Dice for Simulation
-            "Position": (0, 1, 0) // Initial Position [m]
-            "Orientation": (r.normal(), r.normal(), r.normal(), r.normal()) // Initial Orientation [m]
-            "Velocity": (r.normal(), r.normal(), r.normal()) // Initial Linear Velocity [m/s]
-            "Angular_Velocity": (r.normal(), r.normal(), r.normal()) // Initial Angular Velocity [rad/s]
-            "Print": "pos:", $position, "\tv:", |$velocity|, "\tori:", $orientation, ; // Contents to Print, Divided by ','
-            "Print_Condition": false // The Condition Statement for Print
-            "Time_Step": 1.0f / 60.0f // Time Step for Simulation Update [s]
-            "Time_Limit":  30 // Time Limit for Simulation [s]
-            "Stop_Threshold": 1E-8 // Threshold for Velocity and Angular Velocity as Zero [m/s]
-            "Before_Update":  // C++ Commands to Add Before Simulation Update in Each Loop
-            "After_Update_1": if ((test + 1) % TESTS == 0) std::cout << ">"; // C++ Commands to Add Between Simulation Update and Print in Each Loop
-            "After_Update_2": if (fabs(ori.x) > 0.01 && fabs(ori.y) > 0.01 && fabs(ori.z) > 0.01 && fabs(ori.w) > 0.01) P_occur++; // C++ Commands to Add Between Simulation Print and Stopping Condition Check in Each Loop
-            "After_Update_3":  // C++ Commands to Add After Stopping Condition Check in Each Loop
-        ```! // TASK: simu
+    for (double H_R = 0.25; H_R < 2.1; H_R += 0.25) {
+        #DS_BEGIN_DICE
+            "Name": dice // Identifier of the Dice
+            "Type": cylinder // Dice Type ("Box", "Cylinder")
+            "Size_R": 4 // Radius of a Cylinder (Discarded for Box)
+            "Size_H": 4 * H_R // Height of a Cylinder (Discarded for Box)
+            "Cylinder_Sides": 1000 // Number of Side Faces for the Cylinder
+            "Position": (0, 10, 0) // Initial Position [m]
+            "Orientation": (0, 0, 0, 0) // Initial Position [m]
+            "Velocity": (0, 0, 0) // Initial Velocity [m/s]
+            "Angular_Velocity": (0, 0, 0) // Initial Angular Velocity [rad/s]
+            "Friction": 0.4 // Friction Coefficient
+            "Bounciness": 0.5 // Bounciness of the Material
+            "Damping": 0 // Linear Velocity Damping
+            "Angular_Damping": 0 // Angular Velocity Damping
+        #DS_END_DICE
+        // simulation
+        int TESTS = 1000;
+        int P_occur = 0;
+        for (int test = 0; test != TESTS; test++) {
+            ``` simu
+                "Dice": dice // Dice for Simulation
+                "Position": (0, 1, 0) // Initial Position [m]
+                "Orientation": (r.normal(), r.normal(), r.normal(), r.normal()) // Initial Orientation [m]
+                "Velocity": (0, 0, 0) // Initial Linear Velocity [m/s]
+                "Angular_Velocity": (0, 0, 0) // Initial Angular Velocity [rad/s]
+                "Print": "pos:", $position, "\tv:", |$velocity|, "\tori:", $orientation, ; // Contents to Print, Divided by ','
+                "Print_Condition": false // The Condition Statement for Print
+                "Time_Step": 1.0f / 120.0f // Time Step for Simulation Update [s]
+                "Time_Limit":  20 // Time Limit for Simulation [s]
+                "Stop_Threshold": 1E-8 // Threshold for Velocity and Angular Velocity as Zero [m/s]
+                "Before_Update":  // C++ Commands to Add Before Simulation Update in Each Loop
+                "After_Update_1":  // C++ Commands to Add Between Simulation Update and Print in Each Loop
+                "After_Update_2": if (fabs(ori.x) > 0.02 && fabs(ori.y) > 0.02 && fabs(ori.z) > 0.02 && fabs(ori.w) > 0.02) P_occur++; // C++ Commands to Add Between Simulation Print and Stopping Condition Check in Each Loop
+                "After_Update_3":  // C++ Commands to Add After Stopping Condition Check in Each Loop
+            ```! // TASK: simu
+        }
+        std::cout << (double)P_occur / TESTS << std::endl;
     }
-    std::cout << (double)P_occur / TESTS;
     
 #DS_END_PROCESS
