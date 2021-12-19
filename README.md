@@ -22,6 +22,25 @@ This software is based on [Qt](https://qt.io), [ReactPhysics3D](https://github.c
 
 In this version, basic functions of ds-convert are achieved but tests have not been done.
 
+## Installation
+### Mac
+- Option 1: Download Release
+  - The release build is universal, for both Apple Silicon and Intel Silicon.
+  - Need to have `qtbase` or full Qt 6 (Best to be 6.2.0). You can install `qtbase` using MacPort with `sudo port install qt6-qtbase`. However this is not tested.
+- Option 2: Build from Source *(Recommended)*
+  - First build AStyle with CMake or XCode.
+  - Build Dice Simulation `pro` file.
+
+### Windows
+- Option 1: Download Release *(Recommended)*
+- Option 2: Build from Source
+  - You can try using the `AStyle.exe`. If it fails, build it with CMake.
+  - Build Dice Simulation `pro` file.
+
+### Linux
+You have no choice but to build it yourself currently.
+But it has been tested on Ubuntu 20, with Qt 6.2.2.
+
 ## Project Schedule
 
 ### Version 0.x
